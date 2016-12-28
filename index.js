@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 const mongoose = require('mongoose');
 const request = require('request');
 const logger = require('morgan');
@@ -12,6 +14,12 @@ const UserRoutes = require('./User/UserRoutes');
 const uristring =
     process.env.MONGODB_URI ||
     'mongodb://localhost/comeeda';
+
+io.on('connection', function(socket){
+  socket.on('chat message', function(msg){
+    io.emit('chat message', msg);
+  });
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));

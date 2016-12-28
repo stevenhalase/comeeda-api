@@ -6,8 +6,12 @@ var UserSchema = new Schema({
 	'lastname' : String,
 	'email' : String,
 	'organization' : String,
+	'jobtitle': String,
+	'city': String,
+	'state': String,
 	'membertype' : Array,
-	'password' : String
+	'password' : String,
+	'image': { data: Buffer, contentType: String }
 });
 
 module.exports = mongoose.model('User', UserSchema);

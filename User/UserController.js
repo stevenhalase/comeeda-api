@@ -142,8 +142,12 @@ module.exports = {
 			User.lastname = req.body.lastname ? req.body.lastname : User.lastname;
 			User.email = req.body.email ? req.body.email : User.email;
 			User.organization = req.body.organization ? req.body.organization : User.organization;
+			User.jobtitle = req.body.jobtitle ? req.body.jobtitle : User.jobtitle;
+			User.city = req.body.city ? req.body.city : User.city;
+			User.state = req.body.state ? req.body.state : User.state;
 			User.membertype = req.body.membertype ? req.body.membertype : User.membertype;
 			User.password = req.body.password ? req.body.password : User.password;
+			User.image = req.body.image ? req.body.image : User.image;
 			
             User.save(function (err, User) {
                 if (err) {
