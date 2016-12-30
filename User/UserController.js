@@ -67,7 +67,7 @@ module.exports = {
                 if(bcrypt.compareSync(req.body.password, User.password)) {
                     return res.json(User);
                 } else {
-                    return res.status(404).json({
+                    return res.json.json({
                         message: 'Failure getting User'
                     });
                 }
