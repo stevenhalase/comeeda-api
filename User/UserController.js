@@ -149,6 +149,7 @@ module.exports = {
 			User.membertype = req.body.membertype ? req.body.membertype : User.membertype;
 			User.password = req.body.password ? req.body.password : User.password;
 			User.image = req.body.image ? req.body.image : User.image;
+            User.location = req.body.location ? req.body.location : User.location;
 			
             User.save(function (err, User) {
                 if (err) {
