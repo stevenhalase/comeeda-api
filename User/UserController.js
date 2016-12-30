@@ -68,7 +68,8 @@ module.exports = {
                     return res.json(User);
                 } else {
                     return res.json.json({
-                        message: 'Failure getting User'
+                        message: 'Failure getting User',
+                        error: 'Failure getting User'
                     });
                 }
             }
