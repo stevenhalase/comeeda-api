@@ -59,8 +59,9 @@ module.exports = {
                 });
             }
             if (!User) {
-                return res.status(404).json({
-                    message: 'No such User'
+                return res.json.json({
+                    message: 'Failure getting User',
+                    error: 'Failure getting User'
                 });
             }
 
