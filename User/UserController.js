@@ -49,6 +49,7 @@ module.exports = {
      * UserController.login()
      */
     login: function (req, res) {
+        console.log('LOGIN: ', req.body);
         var email = req.body.email;
         UserModel.findOne({email: email}, function (err, User) {
             if (err) {
