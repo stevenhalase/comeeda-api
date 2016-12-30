@@ -53,13 +53,13 @@ module.exports = {
         var email = req.body.email;
         UserModel.findOne({email: email}, function (err, User) {
             if (err) {
-                return res.json.json({
+                return res.json({
                     message: 'Failure getting User',
                     error: 'Failure getting User'
                 });
             }
             if (!User) {
-                return res.json.json({
+                return res.json({
                     message: 'Failure getting User',
                     error: 'Failure getting User'
                 });
@@ -69,7 +69,7 @@ module.exports = {
                 if(bcrypt.compareSync(req.body.password, User.password)) {
                     return res.json(User);
                 } else {
-                    return res.json.json({
+                    return res.json({
                         message: 'Failure getting User',
                         error: 'Failure getting User'
                     });
