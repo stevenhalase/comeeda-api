@@ -11,7 +11,8 @@ var UserSchema = new Schema({
 	'state': String,
 	'membertype' : Array,
 	'password' : String,
-	'image': { data: Buffer, contentType: String }
+	'image': { data: Buffer, contentType: String },
+	'location': Object
 });
 
 module.exports = mongoose.model('User', UserSchema);

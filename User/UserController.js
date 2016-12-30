@@ -102,7 +102,8 @@ module.exports = {
                     email : req.body.email,
                     organization : req.body.organization,
                     membertype : req.body.membertype,
-                    password : req.body.password
+                    password : req.body.password,
+                    location : req.body.location
                 });
                 console.log('PASSWORD: ', User.password);
                 User.password = bcrypt.hashSync(User.password, salt);
