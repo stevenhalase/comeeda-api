@@ -53,9 +53,9 @@ module.exports = {
         var email = req.body.email;
         UserModel.findOne({email: email}, function (err, User) {
             if (err) {
-                return res.status(500).json({
-                    message: 'Error when getting User.',
-                    error: err
+                return res.json.json({
+                    message: 'Failure getting User',
+                    error: 'Failure getting User'
                 });
             }
             if (!User) {
