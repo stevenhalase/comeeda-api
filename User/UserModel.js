@@ -12,7 +12,7 @@ var UserSchema = new Schema({
 	'membertype' : Array,
 	'password' : String,
 	'image': { data: Buffer, contentType: String },
-	'location': Schema.Types.Mixed
+	'location': Object
 });
 
 module.exports = mongoose.model('User', UserSchema);

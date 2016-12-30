@@ -80,6 +80,7 @@ module.exports = {
      * UserController.create()
      */
     create: function (req, res) {
+        console.log('CREATE: ', req.body)
         var email = req.body.email;
         UserModel.findOne({email: email}, function (err, User) {
             if (err) {
