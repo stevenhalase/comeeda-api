@@ -20,16 +20,16 @@ io.on('connection', function(socket){
     io.emit('connected', 'hello');
 });
 
-server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({extended: true}));
-server.use(function(req, res, next) {
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", req.header("Origin"));
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   next();
 });
-server.use(express.static(path.join(__dirname, './www')))
+app.use(express.static(path.join(__dirname, './www')))
 
 mongoose.connect(uristring, function(error) {
   if (error) {
@@ -39,7 +39,7 @@ mongoose.connect(uristring, function(error) {
   }
 })
 
-server.use('/', UserRoutes);
+app.use('/', UserRoutes);
 
 server.listen(port, function () {
     console.log('Server started at localhost:' + port);
