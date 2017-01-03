@@ -1,8 +1,7 @@
 const express = require('express');
 const app = express();
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
-http.listen(443, "https://comeeda-api.herokuapp.com");
+var io = require('socket.io').listen(http);
 const mongoose = require('mongoose');
 const request = require('request');
 const logger = require('morgan');
