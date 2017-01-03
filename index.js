@@ -15,10 +15,6 @@ const uristring =
     process.env.MONGODB_URI ||
     'mongodb://localhost/comeeda';
 
-io.on('connection', function(socket){
-    io.emit('connected', 'hello');
-});
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(function(req, res, next) {
@@ -36,6 +32,10 @@ mongoose.connect(uristring, function(error) {
       console.log('Mongoose connected successfully')
   }
 })
+
+io.on('connection', function(socket){
+    io.emit('connected', 'hello');
+});
 
 app.use('/', UserRoutes);
 
