@@ -10,23 +10,25 @@ const path = require('path');
 const port = process.env.PORT || 4000;
 
 const UserRoutes = require('./User/UserRoutes');
+const TempPickup = require('./tempPickup');
 
 const uristring =
     process.env.MONGODB_URI ||
     'mongodb://localhost/comeeda';
 
 let onlineVolunteers = [];
+let tempPickups = [];
 
-io.on('connection', function(socket){
+io.on('connection', (socket) => {
     socket.emit('connected', 'hello');
 
-    socket.on('volunteerOnline', function(user) {
+    socket.on('volunteerOnline', (user) => {
         user.socketId = socket.id;
         onlineVolunteers.push(user);
         console.log(onlineVolunteers);
     })
 
-    socket.on('volunteerOffline', function() {
+    socket.on('volunteerOffline', () => {
         for (let i = 0; i < onlineVolunteers.length; i++) {
             if (onlineVolunteers[i].socketId == socket.id) {
                 onlineVolunteers.splice(i,1);
@@ -35,7 +37,7 @@ io.on('connection', function(socket){
         console.log(onlineVolunteers);
     });
 
-    socket.on('requestPickup', function(user) {
+    socket.on('requestPickup', (user) => {
         let userLocation = user.location;
         let smallestDistance;
         let closestVolunteer;
@@ -44,13 +46,13 @@ io.on('connection', function(socket){
                     onlineVolunteers[i].location.latitude, onlineVolunteers[i].location.longitude)
             if (i == 0) {
                 let distance = calculateDistance(userLocation.latitude, userLocation.longitude, 
-                    onlineVolunteers[i].latitude, onlineVolunteers[i].longitude, "M");
+                    onlineVolunteers[i].location.latitude, onlineVolunteers[i].location.longitude, "M");
                 console.log('distance', distance);
                 smallestDistance = distance;
                 closestVolunteer = onlineVolunteers[i];
             }
             let distance = calculateDistance(userLocation.latitude, userLocation.longitude, 
-                onlineVolunteers[i].latitude, onlineVolunteers[i].longitude, "M");
+                onlineVolunteers[i].location.latitude, onlineVolunteers[i].location.longitude, "M");
             console.log('distance', distance);
             if (distance < smallestDistance) {
                 smallestDistance = distance;
@@ -59,10 +61,23 @@ io.on('connection', function(socket){
         }
         console.log('Smallest', smallestDistance);
         console.log('Closest', closestVolunteer);
-        socket.emit('volunteerAssigned', closestVolunteer);
+        user.socketId = socket.id;
+        let tempPickup = new TempPickup(user, closestVolunteer)
+        tempPickups.push(tempPickup);
+        io.to(closestVolunteer.socketId).emit('tryAssignment', tempPickup);
     })
 
-    socket.on('disconnect', function() {
+    socket.on('acceptPickupRequest', (tempPickup) => {
+        console.log(tempPickup)
+        io.to(tempPickup.donator.socketId).emit('volunteerAssigned', tempPickup.volunteer);
+        for (var i = 0; i < tempPickups.length; i++) {
+            if (tempPickup.id == tempPickups[i].id) {
+                tempPickups.splice(i, 1);
+            }
+        }
+    })
+
+    socket.on('disconnect', () => {
         for (let i = 0; i < onlineVolunteers.length; i++) {
             if (onlineVolunteers[i].socketId == socket.id) {
                 onlineVolunteers.splice(i,1);
@@ -102,7 +117,7 @@ app.use(function(req, res, next) {
 });
 app.use(express.static(path.join(__dirname, './www')))
 
-mongoose.connect(uristring, function(error) {
+mongoose.connect(uristring, (error) => {
   if (error) {
       console.error(error);
   } else {
@@ -112,6 +127,6 @@ mongoose.connect(uristring, function(error) {
 
 app.use('/', UserRoutes);
 
-server.listen(port, function () {
+server.listen(port, () => {
     console.log('Server started at localhost:' + port);
 })
