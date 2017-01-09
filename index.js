@@ -10,7 +10,9 @@ const path = require('path');
 const port = process.env.PORT || 4000;
 
 const UserRoutes = require('./User/UserRoutes');
-const TempPickup = require('./tempPickup');
+
+const User = require('./User/UserModel').UserModel;
+const Pickup = require('./Pickup/PickupModel').PickupModel;
 
 const uristring =
     process.env.MONGODB_URI ||
@@ -18,19 +20,20 @@ const uristring =
 
 let onlineVolunteers = [];
 let tempPickups = [];
+let activePickups = [];
 
 io.on('connection', (socket) => {
     socket.emit('connected', 'hello');
 
     socket.on('volunteerOnline', (user) => {
-        user.socketId = socket.id;
+        user.socketid = socket.id;
         onlineVolunteers.push(user);
         console.log(onlineVolunteers);
     })
 
     socket.on('volunteerOffline', () => {
         for (let i = 0; i < onlineVolunteers.length; i++) {
-            if (onlineVolunteers[i].socketId == socket.id) {
+            if (onlineVolunteers[i].socketid == socket.id) {
                 onlineVolunteers.splice(i,1);
             }
         }
@@ -38,20 +41,19 @@ io.on('connection', (socket) => {
     });
 
     socket.on('requestPickup', (user) => {
-        let userLocation = user.location;
         let smallestDistance;
         let closestVolunteer;
         for (let i = 0; i < onlineVolunteers.length; i++) {
-            console.log(userLocation.latitude, userLocation.longitude, 
+            console.log(user.location.latitude, user.location.longitude, 
                     onlineVolunteers[i].location.latitude, onlineVolunteers[i].location.longitude)
             if (i == 0) {
-                let distance = calculateDistance(userLocation.latitude, userLocation.longitude, 
+                let distance = calculateDistance(user.location.latitude, user.location.longitude, 
                     onlineVolunteers[i].location.latitude, onlineVolunteers[i].location.longitude, "M");
                 console.log('distance', distance);
                 smallestDistance = distance;
                 closestVolunteer = onlineVolunteers[i];
             }
-            let distance = calculateDistance(userLocation.latitude, userLocation.longitude, 
+            let distance = calculateDistance(user.location.latitude, user.location.longitude, 
                 onlineVolunteers[i].location.latitude, onlineVolunteers[i].location.longitude, "M");
             console.log('distance', distance);
             if (distance < smallestDistance) {
@@ -61,25 +63,44 @@ io.on('connection', (socket) => {
         }
         console.log('Smallest', smallestDistance);
         console.log('Closest', closestVolunteer);
-        user.socketId = socket.id;
-        let tempPickup = new TempPickup(user, closestVolunteer)
+        user.socketid = socket.id;
+        var tempPickup = {
+            donator: user,
+            volunteer: closestVolunteer,
+            status: [{ name: 'New', date: Date.now() }],
+            date: Date.now()
+        }
         tempPickups.push(tempPickup);
-        io.to(closestVolunteer.socketId).emit('tryAssignment', tempPickup);
+        io.to(closestVolunteer.socketid).emit('tryAssignment', tempPickup);
     })
 
     socket.on('acceptPickupRequest', (tempPickup) => {
         console.log(tempPickup)
-        io.to(tempPickup.donator.socketId).emit('volunteerAssigned', tempPickup.volunteer);
+        tempPickup.status.push({ name: 'Accepted', date: Date.now() })
+        io.to(tempPickup.donator.socketid).emit('volunteerAssigned', tempPickup.volunteer);
+        io.to(tempPickup.volunteer.socketid).emit('startPickup', tempPickup);
         for (var i = 0; i < tempPickups.length; i++) {
             if (tempPickup.id == tempPickups[i].id) {
+                activePickups.push(tempPickup);
                 tempPickups.splice(i, 1);
+                tempPickup = new Pickup({
+                    donator: tempPickup.donator,
+                    volunteer: tempPickup.volunteer,
+                    geo: tempPickup.geo,
+                    date: tempPickup.date,
+                    status: tempPickup.status
+                }).save();
             }
         }
+    });
+
+    socket.on('updateVolunteerLocation', (volLatLng, activePickup) => {
+        io.to(activePickup.donator.socketid).emit('updateVolunteerLocationForDonator', volLatLng);
     })
 
     socket.on('disconnect', () => {
         for (let i = 0; i < onlineVolunteers.length; i++) {
-            if (onlineVolunteers[i].socketId == socket.id) {
+            if (onlineVolunteers[i].socketid == socket.id) {
                 onlineVolunteers.splice(i,1);
             }
         }

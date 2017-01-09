@@ -1,4 +1,4 @@
-const UserModel = require('./UserModel.js');
+const UserModel = require('./UserModel.js').UserModel;
 const bcrypt = require('bcrypt');
 const salt = bcrypt.genSaltSync(10);
 
@@ -107,7 +107,8 @@ module.exports = {
                     organization : req.body.organization,
                     membertype : req.body.membertype,
                     password : req.body.password,
-                    location : req.body.location
+                    location : req.body.location,
+                    socketid : req.body.socketid
                 });
                 console.log('PASSWORD: ', User.password);
                 User.password = bcrypt.hashSync(User.password, salt);
@@ -154,6 +155,7 @@ module.exports = {
 			User.password = req.body.password ? req.body.password : User.password;
 			User.image = req.body.image ? req.body.image : User.image;
             User.location = req.body.location ? req.body.location : User.location;
+            User.socketid = req.body.socketid ? req.body.socketid : User.socketid;
 			
             User.save(function (err, User) {
                 if (err) {

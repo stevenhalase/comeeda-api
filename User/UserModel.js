@@ -12,7 +12,11 @@ var UserSchema = new Schema({
 	'membertype' : Array,
 	'password' : String,
 	'image': { data: Buffer, contentType: String },
-	'location': Object
+	'location': Object,
+	'socketid': String
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = {
+	UserModel : mongoose.model('User', UserSchema),
+	UserSchema : UserSchema
+}
