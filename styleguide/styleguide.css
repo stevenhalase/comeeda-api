@@ -147,7 +147,8 @@ h6 {
 
 .font-example-block-types {
     padding: 10px 20px;
-    display: inline;
+    margin: 3px 0px;
+    display: inline-table;
     background-color: #222;
 }
 
