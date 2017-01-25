@@ -148,6 +148,10 @@ mongoose.connect(uristring, (error) => {
 
 app.use('/', UserRoutes);
 
+app.get('/styleguide', (req, res) => {
+    res.sendFile('./styleguide.html');
+})
+
 server.listen(port, () => {
     console.log('Server started at localhost:' + port);
 })
