@@ -148,8 +148,10 @@ mongoose.connect(uristring, (error) => {
 
 app.use('/', UserRoutes);
 
+app.use(express.static(path.join(__dirname, '/styleguide')))
+
 app.get('/styleguide', (req, res) => {
-    res.sendFile('./styleguide.html');
+    res.sendFile('./styleguide.html', { root: path.join(__dirname, '/styleguide') });
 })
 
 server.listen(port, () => {
