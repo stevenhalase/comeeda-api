@@ -1,3 +1,5 @@
+@import "./_prettify-theme.scss";
+
 $bismark : #4A6881;
 $bismark-light : #5c778d;
 $bismark-dark : #425d74;
@@ -471,6 +473,7 @@ button {
     font-family: Menlo,Monaco,'Courier New',Courier,monospace;
     display: none;
     margin: 20px 0;
+    overflow-x: hidden;
 }
 
 .show-code {
