@@ -101,10 +101,9 @@
         <article class="pattern pattern-colors">
             <h2>Colors</h2>
 
-            <p>These are the Primary Colors derived from the color pallette that was chosen.</p>
-
             <div class="pattern-example">
                 <h4>Primary Colors</h4>
+                
                 <div class="color-example-container">
                     <div class="color-example bismark-light">$bismark-light</div>
                     <div class="color-example bismark">$bismark</div>
@@ -219,6 +218,9 @@
                     <div class="avatar">
                         <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
                     </div>
+                    <div class="avatar avatar--bordered">
+                        <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
+                    </div>
                     <div class="avatar avatar--small">
                         <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
                     </div>
@@ -231,6 +233,9 @@
             <div class="code-block" id="profile-image-round">
 <pre class="prettyprint lang-html">
 <div class="avatar">
+    <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
+</div>
+<div class="avatar avatar--bordered">
     <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
 </div>
 <div class="avatar avatar--small">
@@ -249,6 +254,9 @@
                     <div class="avatar avatar--squared">
                         <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
                     </div>
+                    <div class="avatar avatar--squared avatar--bordered">
+                        <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
+                    </div>
                     <div class="avatar avatar--squared avatar--small">
                         <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
                     </div>
@@ -260,6 +268,9 @@
             <div class="code-block" id="profile-image-squared">
 <pre class="prettyprint lang-html">
 <div class="avatar avatar--squared">
+    <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
+</div>
+<div class="avatar avatar--squared avatar--bordered">
     <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
 </div>
 <div class="avatar avatar--squared avatar--small">
@@ -426,6 +437,99 @@
 
         </article>
 
+        <article class="pattern pattern-pickup">
+            <h2>Requested Pickups Block</h2>
+
+            <div class="pattern-example">
+                <span id="pickups-block-selector" class="show-code">&lt;/&gt;</span>
+
+                <div class="pickups-example-container-outer">
+                    <div class="pickups-example-container">
+                        <div class="pickups-block">
+                            <div class="pickups-header">
+                                Requested Pickups
+                            </div>
+                            <div class="pickups-block-list">
+                                <div class="pickup">
+                                    <div class="avatar avatar--tiny avatar--bordered">
+                                        <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
+                                    </div>
+                                    <div class="pickup-info">
+                                        <h4>Steven Halase</h4>
+                                        <p>5 mins</p>
+                                    </div>
+                                    <span>></span>
+                                </div>
+                                <div class="pickup">
+                                    <div class="avatar avatar--tiny avatar--bordered">
+                                        <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
+                                    </div>
+                                    <div class="pickup-info">
+                                        <h4>Steven Halase</h4>
+                                        <p>5 mins</p>
+                                    </div>
+                                    <span>></span>
+                                </div>
+                                <div class="pickup">
+                                    <div class="avatar avatar--tiny avatar--bordered">
+                                        <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
+                                    </div>
+                                    <div class="pickup-info">
+                                        <h4>Steven Halase</h4>
+                                        <p>5 mins</p>
+                                    </div>
+                                    <span>></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-block" id="pickups-block">
+<pre class="prettyprint lang-html">
+<div class="pickups-block">
+    <div class="pickups-header">
+        Requested Pickups
+    </div>
+    <div class="pickups-block-list">
+        <div class="pickup">
+            <div class="avatar avatar--tiny avatar--bordered">
+                <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
+            </div>
+            <div class="pickup-info">
+                <h4>Steven Halase</h4>
+                <p>5 mins</p>
+            </div>
+            <span>></span>
+        </div>
+        <div class="pickup">
+            <div class="avatar avatar--tiny avatar--bordered">
+                <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
+            </div>
+            <div class="pickup-info">
+                <h4>Steven Halase</h4>
+                <p>5 mins</p>
+            </div>
+            <span>></span>
+        </div>
+        <div class="pickup">
+            <div class="avatar avatar--tiny avatar--bordered">
+                <img src="https://bcrc.org/wp-content/uploads/2016/01/profile-pic-placeholder.jpg"/>
+            </div>
+            <div class="pickup-info">
+                <h4>Steven Halase</h4>
+                <p>5 mins</p>
+            </div>
+            <span>></span>
+        </div>
+    </div>
+</div>
+</pre>
+                </div>
+            </div>
+
+        </article>
+
         <script>
             $(document).ready(function() {
                 $('#button-ios-selector').click(function() {
@@ -446,6 +550,9 @@
                 $('#profile-block-md-selector').click(function() {
                     $('#profile-block-md').slideToggle();
                 })
+                $('#pickups-block-selector').click(function() {
+                    $('#pickups-block').slideToggle();
+                })
             })
 
             $(document).ready(function() {
@@ -460,7 +567,7 @@
                     }[m]});
                 });
 
-                prettyPrint();
+                // prettyPrint();
             });
         </script>
 
