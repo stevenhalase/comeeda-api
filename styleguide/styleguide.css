@@ -350,6 +350,9 @@ button {
         border-color: #e2626f;
         color: #e2626f;
         background-color: transparent; }
+  .button--full {
+    width: 100%;
+    border-radius: 0; }
 
 .avatar {
   margin: 8px;
