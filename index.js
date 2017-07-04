@@ -40,6 +40,22 @@ io.on('connection', (socket) => {
         console.log(onlineVolunteers);
     });
 
+    socket.on('findVolunteers', (user) => {
+      let nearbyVolunteers = [];
+      for (let i = 0; i < onlineVolunteers.length; i++) {
+          console.log(user.location.latitude, user.location.longitude, 
+                  onlineVolunteers[i].location.latitude, onlineVolunteers[i].location.longitude)
+          let distance = calculateDistance(user.location.latitude, user.location.longitude, 
+                  onlineVolunteers[i].location.latitude, onlineVolunteers[i].location.longitude, "M");
+
+          if (distance <= 10) {
+            nearbyVolunteers.push(onlineVolunteers[i]);
+          }
+      }
+      user.socketid = socket.id;
+      io.to(user.socketid).emit('foundVolunteers', nearbyVolunteers);
+    })
+
     socket.on('requestPickup', (user) => {
         let smallestDistance;
         let closestVolunteer;
