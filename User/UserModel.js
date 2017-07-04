@@ -13,7 +13,8 @@ var UserSchema = new Schema({
 	'password' : String,
 	'image': { data: Buffer, contentType: String },
 	'location': Object,
-	'socketid': String
+	'socketid': String,
+  'modifiedon': Date
 });
 
 module.exports = {

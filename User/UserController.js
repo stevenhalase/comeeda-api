@@ -108,7 +108,8 @@ module.exports = {
                     membertype : req.body.membertype,
                     password : req.body.password,
                     location : req.body.location,
-                    socketid : req.body.socketid
+                    socketid : req.body.socketid,
+                    modifiedon : new Date(Date.now())
                 });
                 console.log('PASSWORD: ', User.password);
                 User.password = bcrypt.hashSync(User.password, salt);
@@ -145,17 +146,18 @@ module.exports = {
             }
 
             User.firstname = req.body.firstname ? req.body.firstname : User.firstname;
-			User.lastname = req.body.lastname ? req.body.lastname : User.lastname;
-			User.email = req.body.email ? req.body.email : User.email;
-			User.organization = req.body.organization ? req.body.organization : User.organization;
-			User.jobtitle = req.body.jobtitle ? req.body.jobtitle : User.jobtitle;
-			User.city = req.body.city ? req.body.city : User.city;
-			User.state = req.body.state ? req.body.state : User.state;
-			User.membertype = req.body.membertype ? req.body.membertype : User.membertype;
-			User.password = req.body.password ? req.body.password : User.password;
-			User.image = req.body.image ? req.body.image : User.image;
+            User.lastname = req.body.lastname ? req.body.lastname : User.lastname;
+            User.email = req.body.email ? req.body.email : User.email;
+            User.organization = req.body.organization ? req.body.organization : User.organization;
+            User.jobtitle = req.body.jobtitle ? req.body.jobtitle : User.jobtitle;
+            User.city = req.body.city ? req.body.city : User.city;
+            User.state = req.body.state ? req.body.state : User.state;
+            User.membertype = req.body.membertype ? req.body.membertype : User.membertype;
+            User.password = req.body.password ? req.body.password : User.password;
+            User.image = req.body.image ? req.body.image : User.image;
             User.location = req.body.location ? req.body.location : User.location;
             User.socketid = req.body.socketid ? req.body.socketid : User.socketid;
+            User.modifiedon = new Date(Date.now());
 			
             User.save(function (err, User) {
                 if (err) {
