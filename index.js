@@ -110,6 +110,44 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('cancelPickup', (activePickup) => {
+        console.log(activePickup)
+        activePickup.status.push({ name: 'Canceled', date: Date.now() })
+        io.to(activePickup.donator.socketid).emit('pickupCanceledDonator');
+        io.to(activePickup.volunteer.socketid).emit('pickupCanceledVolunteer');
+        for (var i = 0; i < activePickups.length; i++) {
+            if (activePickup.id == activePickups[i].id) {
+                activePickups.splice(i, 1);
+                activePickup = new Pickup({
+                    donator: activePickup.donator,
+                    volunteer: activePickup.volunteer,
+                    geo: activePickup.geo,
+                    date: activePickup.date,
+                    status: activePickup.status
+                }).save();
+            }
+        }
+    });
+
+    socket.on('completePickup', (activePickup) => {
+        console.log(activePickup)
+        activePickup.status.push({ name: 'Complete', date: Date.now() })
+        io.to(activePickup.donator.socketid).emit('pickupCompleteDonator');
+        io.to(activePickup.volunteer.socketid).emit('pickupCompleteVolunteer');
+        for (var i = 0; i < activePickups.length; i++) {
+            if (activePickup.id == activePickups[i].id) {
+                activePickups.splice(i, 1);
+                activePickup = new Pickup({
+                    donator: activePickup.donator,
+                    volunteer: activePickup.volunteer,
+                    geo: activePickup.geo,
+                    date: activePickup.date,
+                    status: activePickup.status
+                }).save();
+            }
+        }
+    });
+
     socket.on('updateVolunteerLocation', (volLatLng, activePickup) => {
         io.to(activePickup.donator.socketid).emit('updateVolunteerLocationForDonator', volLatLng);
     })
