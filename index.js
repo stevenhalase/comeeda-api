@@ -149,13 +149,12 @@ io.on('connection', (socket) => {
     });
 
     socket.on('updateVolunteerLocation', (volLatLng, activePickup) => {
-      console.log(volLatLng)
-        // for (let i = 0; i < onlineVolunteers.length; i++) {
-        //     if (onlineVolunteers[i].socketid == socket.id) {
-        //         onlineVolunteers[i].location.latitude = volLatLng.lat();
-        //         onlineVolunteers[i].location.longitude = volLatLng.lng();
-        //     }
-        // }
+        for (let i = 0; i < onlineVolunteers.length; i++) {
+            if (onlineVolunteers[i].socketid == socket.id) {
+                onlineVolunteers[i].location.latitude = volLatLng.lat;
+                onlineVolunteers[i].location.longitude = volLatLng.lng;
+            }
+        }
         io.to(activePickup.donator.socketid).emit('updateVolunteerLocationForDonator', volLatLng);
     })
 
