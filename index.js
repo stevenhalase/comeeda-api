@@ -91,7 +91,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('acceptPickupRequest', (tempPickup) => {
-        console.log(tempPickup)
+        console.log('Accepting pickup: ', tempPickup)
         tempPickup.status.push({ name: 'Accepted', date: Date.now() })
         io.to(tempPickup.donator.socketid).emit('volunteerAssigned', tempPickup.volunteer);
         io.to(tempPickup.volunteer.socketid).emit('startPickup', tempPickup);
@@ -111,7 +111,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('cancelPickup', (activePickup) => {
-        console.log(activePickup)
+        console.log('Canceling pickup: ', activePickup)
         activePickup.status.push({ name: 'Canceled', date: Date.now() })
         io.to(activePickup.donator.socketid).emit('pickupCanceledDonator');
         io.to(activePickup.volunteer.socketid).emit('pickupCanceledVolunteer');
@@ -130,7 +130,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('completePickup', (activePickup) => {
-        console.log(activePickup)
+        console.log('Completing pickup: ', activePickup)
         activePickup.status.push({ name: 'Complete', date: Date.now() })
         io.to(activePickup.donator.socketid).emit('pickupCompleteDonator');
         io.to(activePickup.volunteer.socketid).emit('pickupCompleteVolunteer');
