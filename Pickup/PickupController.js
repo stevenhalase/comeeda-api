@@ -124,7 +124,7 @@ module.exports = {
      */
     pickupsByUser: function (req, res) {
         var userId = req.params.id;
-        PickupModel.find({ volunteer._id: userId }, function (err, Pickups) {
+        PickupModel.find({ 'volunteer._id': userId }, function (err, Pickups) {
             if (err) {
                 console.log(err)
                 return res.status(500).json({
