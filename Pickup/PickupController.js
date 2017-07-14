@@ -118,4 +118,22 @@ module.exports = {
             return res.status(204).json();
         });
     }
+
+    /**
+     * PickupController.pickupsByUser()
+     */
+    pickupsByUser: function (req, res) {
+        var userId = req.params.id;
+        PickupModel.find({ volunteer._id: userId }, function (err, Pickups) {
+            if (err) {
+                console.log(err)
+                return res.status(500).json({
+                    message: 'Error when getting Pickup.',
+                    error: err
+                });
+            }
+            console.log(Pickups)
+            return res.json(Pickups);
+        });
+    },
 };

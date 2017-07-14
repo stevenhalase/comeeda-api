@@ -10,6 +10,7 @@ const path = require('path');
 const port = process.env.PORT || 4000;
 
 const UserRoutes = require('./User/UserRoutes');
+const PickupRoutes = require('./Pickup/PickupRoutes');
 
 const User = require('./User/UserModel').UserModel;
 const Pickup = require('./Pickup/PickupModel').PickupModel;
@@ -207,6 +208,7 @@ mongoose.connect(uristring, (error) => {
 })
 
 app.use('/', UserRoutes);
+app.use('/', PickupRoutes);
 
 server.listen(port, () => {
     console.log('Server started at localhost:' + port);

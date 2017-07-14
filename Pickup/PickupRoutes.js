@@ -27,4 +27,9 @@ router.put('/:id', PickupController.update);
  */
 router.delete('/:id', PickupController.remove);
 
+/*
+ * GET
+ */
+router.get('/api/pickups/user/:id', PickupController.pickupsByUser);
+
 module.exports = router;
