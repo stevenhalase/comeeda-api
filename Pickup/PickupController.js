@@ -222,18 +222,23 @@ module.exports = {
                   let hasAcceptedStatus = false;
                   let hasCanceledStatus = false;
                   let hasCompleteStatus = false;
+                  let startDate = null;
+                  let endDate = null;
                   for (let status of pickup.status) {
                     if (status.name === 'Accepted') {
                       hasAcceptedStatus = true;
+                      startDate = status.date;
                     } else if (status.name === 'Canceled') {
                       hasCanceledStatus = true;
+                      endDate = status.date;
                     } else if (status.name === 'Complete') {
                       hasCompleteStatus = true;
+                      endDate = status.date;
                     }
                   }
 
-                  if (hasAcceptedStatus && (hasCanceledStatus || hasCompleteStatus)) {
-                    totalTime += Math.floor(Math.abs(date1 - date2) / 36e5);
+                  if (startDate && endDate)) {
+                    totalTime += Math.floor(Math.abs(endDate - startDate) / 36e5);
                   }
                 }
               }
