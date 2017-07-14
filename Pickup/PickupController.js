@@ -236,9 +236,7 @@ module.exports = {
                       endDate = status.date;
                     }
                   }
-                  console.log(startDate, endDate)
                   if (startDate && endDate) {
-                    console.log(Math.abs(endDate - startDate) / 36e5)
                     totalTime += Math.abs(endDate - startDate) / 36e5;
                   }
                 }
@@ -262,6 +260,5 @@ function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	dist = dist * 60 * 1.1515
 	if (unit=="K") { dist = dist * 1.609344 }
 	if (unit=="N") { dist = dist * 0.8684 }
-    console.log(dist);
 	return dist
 }
