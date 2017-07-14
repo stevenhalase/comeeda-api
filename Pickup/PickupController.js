@@ -117,7 +117,7 @@ module.exports = {
             }
             return res.status(204).json();
         });
-    }
+    },
 
     /**
      * PickupController.pickupsByUser()
@@ -135,5 +135,5 @@ module.exports = {
             console.log(Pickups)
             return res.json(Pickups);
         });
-    },
+    }
 };
