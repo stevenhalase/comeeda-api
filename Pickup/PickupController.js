@@ -238,8 +238,8 @@ module.exports = {
                   }
                   console.log(startDate, endDate)
                   if (startDate && endDate) {
-                    console.log(Math.floor(Math.abs(endDate - startDate) / 36e5))
-                    totalTime += Math.floor(Math.abs(endDate - startDate) / 36e5);
+                    console.log(Math.abs(endDate - startDate) / 36e5)
+                    totalTime += Math.abs(endDate - startDate) / 36e5;
                   }
                 }
               }
