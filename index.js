@@ -105,7 +105,8 @@ io.on('connection', (socket) => {
                     volunteer: tempPickup.volunteer,
                     geo: tempPickup.geo,
                     date: tempPickup.date,
-                    status: tempPickup.status
+                    status: tempPickup.status,
+                    startdate: Date.now()
                 }).save();
             }
         }
@@ -124,7 +125,9 @@ io.on('connection', (socket) => {
                     volunteer: activePickup.volunteer,
                     geo: activePickup.geo,
                     date: activePickup.date,
-                    status: activePickup.status
+                    status: activePickup.status,
+                    startdate: activePickup.startdate,
+                    enddate: Date.now()
                 }).save();
             }
         }
@@ -143,7 +146,9 @@ io.on('connection', (socket) => {
                     volunteer: activePickup.volunteer,
                     geo: activePickup.geo,
                     date: activePickup.date,
-                    status: activePickup.status
+                    status: activePickup.status,
+                    startdate: activePickup.startdate,
+                    enddate: Date.now()
                 }).save();
             }
         }

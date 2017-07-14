@@ -8,7 +8,9 @@ var PickupSchema = new Schema({
 	'volunteer' : UserSchema,
 	'status' : [{ name: String, date: Date }],
 	'date' : Date,
-	'geo': Object
+	'geo': Object,
+  'startdate': Date,
+  'enddate': Date
 });
 
 module.exports = {

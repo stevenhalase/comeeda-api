@@ -52,7 +52,9 @@ module.exports = {
 			volunteer : req.body.volunteer,
 			status : req.body.status,
 			date : req.body.date,
-			geo : req.body.geo
+			geo : req.body.geo,
+			startdate : req.body.startdate,
+			enddate : req.body.enddate
         });
 
         Pickup.save(function (err, Pickup) {
@@ -89,6 +91,8 @@ module.exports = {
 			Pickup.status = req.body.status ? req.body.status : Pickup.status;
 			Pickup.date = req.body.date ? req.body.date : Pickup.date;
 			Pickup.geo = req.body.geo ? req.body.geo : Pickup.geo;
+			Pickup.startdate = req.body.startdate ? req.body.startdate : Pickup.startdate;
+			Pickup.enddate = req.body.enddate ? req.body.enddate : Pickup.enddate;
 			
             Pickup.save(function (err, Pickup) {
                 if (err) {
