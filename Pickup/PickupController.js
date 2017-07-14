@@ -160,7 +160,7 @@ module.exports = {
             console.log(counter)
             return res.json({result: counter});
         });
-    }
+    },
 
     /**
      * PickupController.totalDistanceOfPickupsByUser()
