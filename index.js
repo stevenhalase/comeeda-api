@@ -105,8 +105,7 @@ io.on('connection', (socket) => {
                     volunteer: tempPickup.volunteer,
                     geo: tempPickup.geo,
                     date: tempPickup.date,
-                    status: tempPickup.status,
-                    startdate: Date.now()
+                    status: tempPickup.status
                 }).save();
             }
         }
@@ -125,9 +124,7 @@ io.on('connection', (socket) => {
                     volunteer: activePickup.volunteer,
                     geo: activePickup.geo,
                     date: activePickup.date,
-                    status: activePickup.status,
-                    startdate: activePickup.startdate,
-                    enddate: Date.now()
+                    status: activePickup.status
                 }).save();
             }
         }

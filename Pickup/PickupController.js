@@ -52,9 +52,7 @@ module.exports = {
 			volunteer : req.body.volunteer,
 			status : req.body.status,
 			date : req.body.date,
-			geo : req.body.geo,
-			startdate : req.body.startdate,
-			enddate : req.body.enddate
+			geo : req.body.geo
         });
 
         Pickup.save(function (err, Pickup) {
@@ -87,12 +85,10 @@ module.exports = {
             }
 
             Pickup.donator = req.body.donator ? req.body.donator : Pickup.donator;
-			Pickup.volunteer = req.body.volunteer ? req.body.volunteer : Pickup.volunteer;
-			Pickup.status = req.body.status ? req.body.status : Pickup.status;
-			Pickup.date = req.body.date ? req.body.date : Pickup.date;
-			Pickup.geo = req.body.geo ? req.body.geo : Pickup.geo;
-			Pickup.startdate = req.body.startdate ? req.body.startdate : Pickup.startdate;
-			Pickup.enddate = req.body.enddate ? req.body.enddate : Pickup.enddate;
+            Pickup.volunteer = req.body.volunteer ? req.body.volunteer : Pickup.volunteer;
+            Pickup.status = req.body.status ? req.body.status : Pickup.status;
+            Pickup.date = req.body.date ? req.body.date : Pickup.date;
+            Pickup.geo = req.body.geo ? req.body.geo : Pickup.geo;
 			
             Pickup.save(function (err, Pickup) {
                 if (err) {
@@ -157,11 +153,18 @@ module.exports = {
 
             let counter = 0;
             for (let pickup of Pickups) {
-              counter ++
+              if (pickup.status) {
+                if (pickup.status) {
+                  for (let status of pickup.status) {
+                    if (status.name === 'Complete') {
+                      counter++;
+                    }
+                  }
+                }
+              }
             }
 
-
-            console.log(counter)
+            console.log(counter);
             return res.json({result: counter});
         });
     },
@@ -195,6 +198,49 @@ module.exports = {
 
             console.log(totalDistance)
             return res.json({result: totalDistance});
+        });
+    },
+
+    /**
+     * PickupController.totalTimeOfPickupsByUser()
+     */
+    totalTimeOfPickupsByUser: function (req, res) {
+        var userId = req.params.id;
+        PickupModel.find({ 'volunteer._id': userId }, function (err, Pickups) {
+            if (err) {
+                console.log(err)
+                return res.status(500).json({
+                    message: 'Error when getting Pickup.',
+                    error: err
+                });
+            }
+
+            let totalTime = 0;
+            for (let pickup of Pickups) {
+              if (pickup.status) {
+                if (pickup.status) {
+                  let hasAcceptedStatus = false;
+                  let hasCanceledStatus = false;
+                  let hasCompleteStatus = false;
+                  for (let status of pickup.status) {
+                    if (status.name === 'Accepted') {
+                      hasAcceptedStatus = true;
+                    } else if (status.name === 'Canceled') {
+                      hasCanceledStatus = true;
+                    } else if (status.name === 'Complete') {
+                      hasCompleteStatus = true;
+                    }
+                  }
+
+                  if (hasAcceptedStatus && (hasCanceledStatus || hasCompleteStatus)) {
+                    totalTime += Math.floor(Math.abs(date1 - date2) / 36e5);
+                  }
+                }
+              }
+            }
+
+            console.log(totalTime)
+            return res.json({result: totalTime});
         });
     }
 };

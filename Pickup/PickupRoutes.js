@@ -42,4 +42,9 @@ router.get('/api/pickups/user/number/:id', PickupController.numberOfPickupsByUse
  */
 router.get('/api/pickups/user/distance/:id', PickupController.totalDistanceOfPickupsByUser);
 
+/*
+ * GET
+ */
+router.get('/api/pickups/user/time/:id', PickupController.totalTimeOfPickupsByUser);
+
 module.exports = router;
