@@ -32,4 +32,14 @@ router.delete('/:id', PickupController.remove);
  */
 router.get('/api/pickups/user/:id', PickupController.pickupsByUser);
 
+/*
+ * GET
+ */
+router.get('/api/pickups/user/number/:id', PickupController.numberOfPickupsByUser);
+
+/*
+ * GET
+ */
+router.get('/api/pickups/user/distance/:id', PickupController.totalDistanceOfPickupsByUser);
+
 module.exports = router;

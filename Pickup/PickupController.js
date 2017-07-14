@@ -135,5 +135,77 @@ module.exports = {
             console.log(Pickups)
             return res.json(Pickups);
         });
+    },
+
+    /**
+     * PickupController.numberOfPickupsByUser()
+     */
+    numberOfPickupsByUser: function (req, res) {
+        var userId = req.params.id;
+        PickupModel.find({ 'volunteer._id': userId }, function (err, Pickups) {
+            if (err) {
+                console.log(err)
+                return res.status(500).json({
+                    message: 'Error when getting Pickup.',
+                    error: err
+                });
+            }
+
+            let counter = 0;
+            for (let pickup of Pickups) {
+              counter ++
+            }
+
+
+            console.log(counter)
+            return res.json({result: counter});
+        });
+    }
+
+    /**
+     * PickupController.totalDistanceOfPickupsByUser()
+     */
+    totalDistanceOfPickupsByUser: function (req, res) {
+        var userId = req.params.id;
+        PickupModel.find({ 'volunteer._id': userId }, function (err, Pickups) {
+            if (err) {
+                console.log(err)
+                return res.status(500).json({
+                    message: 'Error when getting Pickup.',
+                    error: err
+                });
+            }
+
+            let totalDistance = 0;
+            for (let pickup of Pickups) {
+              if (pickup.geo) {
+                if (pickup.geo.request) {
+                  if (pickup.geo.request.origin && pickup.geo.request.destination) {
+                    if (pickup.geo.request.origin.lat && pickup.geo.request.origin.lng && pickup.geo.request.destination.lat && pickup.geo.request.destination.lng) {
+                      totalDistance += calculateDistance(pickup.geo.request.origin.lat, pickup.geo.request.origin.lng, pickup.geo.request.destination.lat, pickup.geo.request.destination.lng, "M");
+                    }
+                  }
+                }
+              }
+            }
+
+            console.log(totalDistance)
+            return res.json({result: totalDistance});
+        });
     }
 };
+
+function calculateDistance(lat1, lon1, lat2, lon2, unit) {
+	var radlat1 = Math.PI * lat1/180
+	var radlat2 = Math.PI * lat2/180
+	var theta = lon1-lon2
+	var radtheta = Math.PI * theta/180
+	var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+	dist = Math.acos(dist)
+	dist = dist * 180/Math.PI
+	dist = dist * 60 * 1.1515
+	if (unit=="K") { dist = dist * 1.609344 }
+	if (unit=="N") { dist = dist * 0.8684 }
+    console.log(dist);
+	return dist
+}
