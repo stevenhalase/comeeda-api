@@ -237,7 +237,7 @@ module.exports = {
                     }
                   }
 
-                  if (startDate && endDate)) {
+                  if (startDate && endDate) {
                     totalTime += Math.floor(Math.abs(endDate - startDate) / 36e5);
                   }
                 }
