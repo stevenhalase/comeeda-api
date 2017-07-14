@@ -236,8 +236,9 @@ module.exports = {
                       endDate = status.date;
                     }
                   }
-
+                  console.log(startDate, endDate)
                   if (startDate && endDate) {
+                    console.log(Math.floor(Math.abs(endDate - startDate) / 36e5))
                     totalTime += Math.floor(Math.abs(endDate - startDate) / 36e5);
                   }
                 }
