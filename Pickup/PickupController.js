@@ -186,10 +186,12 @@ module.exports = {
             let totalDistance = 0;
             for (let pickup of Pickups) {
               if (pickup.geo) {
-                if (pickup.geo.request) {
-                  if (pickup.geo.request.origin && pickup.geo.request.destination) {
-                    if (pickup.geo.request.origin.lat && pickup.geo.request.origin.lng && pickup.geo.request.destination.lat && pickup.geo.request.destination.lng) {
-                      totalDistance += calculateDistance(pickup.geo.request.origin.lat, pickup.geo.request.origin.lng, pickup.geo.request.destination.lat, pickup.geo.request.destination.lng, "M");
+                if (pickup.geo.waypoints) {
+                  if (pickup.geo.waypoints.length > 1) {
+                    for (let i = 0; i <= pickup.geo.waypoints.length; i++) {
+                      if (pickup.geo.waypoints[i] !== pickup.geo.waypoints[0]) {
+                        totalDistance += calculateDistance(pickup.geo.waypoints[i].lat, pickup.geo.waypoints[i].lng, pickup.geo.waypoints[i - 1].lat, pickup.geo.waypoints[i - 1].lng, "M");
+                      }
                     }
                   }
                 }
