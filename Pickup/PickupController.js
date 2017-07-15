@@ -188,10 +188,8 @@ module.exports = {
               if (pickup.geo) {
                 if (pickup.geo.waypoints) {
                   if (pickup.geo.waypoints.length > 1) {
-                    for (let i = 0; i <= pickup.geo.waypoints.length; i++) {
-                      if (pickup.geo.waypoints[i] !== pickup.geo.waypoints[0]) {
-                        totalDistance += calculateDistance(pickup.geo.waypoints[i].lat, pickup.geo.waypoints[i].lng, pickup.geo.waypoints[i - 1].lat, pickup.geo.waypoints[i - 1].lng, "M");
-                      }
+                    for (let i = 1; i <= pickup.geo.waypoints.length; i++) {
+                      totalDistance += calculateDistance(pickup.geo.waypoints[i].lat, pickup.geo.waypoints[i].lng, pickup.geo.waypoints[i - 1].lat, pickup.geo.waypoints[i - 1].lng, "M");
                     }
                   }
                 }
