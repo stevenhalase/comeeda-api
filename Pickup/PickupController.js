@@ -187,8 +187,9 @@ module.exports = {
             for (let pickup of Pickups) {
               if (pickup.geo) {
                 if (pickup.geo.waypoints) {
+
                   if (pickup.geo.waypoints.length > 1) {
-                    for (let i = 1; i <= pickup.geo.waypoints.length; i++) {
+                    for (let i = 1; i < pickup.geo.waypoints.length; i++) {
                       totalDistance += calculateDistance(pickup.geo.waypoints[i].lat, pickup.geo.waypoints[i].lng, pickup.geo.waypoints[i - 1].lat, pickup.geo.waypoints[i - 1].lng, "M");
                     }
                   }
