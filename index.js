@@ -58,44 +58,34 @@ io.on('connection', (socket) => {
     })
 
     socket.on('requestPickup', (user) => {
-        let smallestDistance;
-        let closestVolunteer;
-        for (let i = 0; i < onlineVolunteers.length; i++) {
-            console.log(user.location.latitude, user.location.longitude, 
-                    onlineVolunteers[i].location.latitude, onlineVolunteers[i].location.longitude)
-            if (i == 0) {
-                let distance = calculateDistance(user.location.latitude, user.location.longitude, 
-                    onlineVolunteers[i].location.latitude, onlineVolunteers[i].location.longitude, "M");
-                console.log('distance', distance);
-                smallestDistance = distance;
-                closestVolunteer = onlineVolunteers[i];
-            }
-            let distance = calculateDistance(user.location.latitude, user.location.longitude, 
-                onlineVolunteers[i].location.latitude, onlineVolunteers[i].location.longitude, "M");
-            console.log('distance', distance);
-            if (distance < smallestDistance) {
-                smallestDistance = distance;
-                closestVolunteer = onlineVolunteers[i];
-            }
-        }
-        console.log('Smallest', smallestDistance);
-        console.log('Closest', closestVolunteer);
+        let distanceSortedVolunteers = onlineVolunteers.slice().sort((a, b) => {
+          let volADistance = calculateDistance(user.location.latitude, user.location.longitude, 
+                    a.location.latitude, a.location.longitude, "M");
+          let volBDistance = calculateDistance(user.location.latitude, user.location.longitude, 
+                    b.location.latitude, b.location.longitude, "M");
+          console.log('Sorting Distance Compare: ', volADistance - volBDistance)
+          return volADistance - volBDistance;
+        })
+        console.log('Sorted: ', distanceSortedVolunteers);
         user.socketid = socket.id;
         var tempPickup = {
             donator: user,
-            volunteer: closestVolunteer,
+            volunteer: {},
+            closestvolunteers: distanceSortedVolunteers,
+            deniedvolunteers: [],
             status: [{ name: 'New', date: Date.now() }],
             date: Date.now()
         }
         tempPickups.push(tempPickup);
-        io.to(closestVolunteer.socketid).emit('tryAssignment', tempPickup);
+        io.to(tempPickup.closestvolunteers[0].socketid).emit('tryAssignment', tempPickup);
     })
 
     socket.on('acceptPickupRequest', (tempPickup) => {
         console.log('Accepting pickup: ', tempPickup)
         tempPickup.status.push({ name: 'Accepted', date: Date.now() })
+        tempPickup.volunteer = tempPickup.closestvolunteers[0];
         io.to(tempPickup.donator.socketid).emit('volunteerAssigned', tempPickup.volunteer);
-        io.to(tempPickup.volunteer.socketid).emit('startPickup', tempPickup);
+        io.to(tempPickup.closestvolunteers[0].socketid).emit('startPickup', tempPickup);
         for (var i = 0; i < tempPickups.length; i++) {
             if (tempPickup.id == tempPickups[i].id) {
                 activePickups.push(tempPickup);
@@ -103,11 +93,40 @@ io.on('connection', (socket) => {
                 tempPickup = new Pickup({
                     donator: tempPickup.donator,
                     volunteer: tempPickup.volunteer,
+                    closestvolunteers: tempPickup.closestvolunteers,
+                    deniedvolunteers: tempPickup.deniedvolunteers,
                     geo: tempPickup.geo,
                     date: tempPickup.date,
                     status: tempPickup.status
                 }).save();
             }
+        }
+    });
+
+    socket.on('denyPickupRequest', (tempPickup) => {
+        console.log('Denying pickup: ', tempPickup)
+        io.to(tempPickup.closestvolunteers[0].socketid).emit('pickupCanceledVolunteer');
+        tempPickup.deniedvolunteers.push(tempPickup.closestvolunteers.splice(0,1));
+        if (tempPickup.closestvolunteers.length > 0) {
+          io.to(tempPickup.closestvolunteers[0].socketid).emit('tryAssignment', tempPickup);
+        } else {
+          console.log('Canceling pickup: ', tempPickup)
+          tempPickup.status.push({ name: 'Canceled', date: Date.now() })
+          io.to(tempPickup.donator.socketid).emit('pickupCanceledDonator');
+          for (var i = 0; i < tempPickups.length; i++) {
+              if (tempPickup.id == tempPickups[i].id) {
+                  tempPickups.splice(i, 1);
+                  tempPickup = new Pickup({
+                      donator: tempPickup.donator,
+                      volunteer: tempPickup.volunteer,
+                      closestvolunteers: tempPickup.closestvolunteers,
+                      deniedvolunteers: tempPickup.deniedvolunteers,
+                      geo: tempPickup.geo,
+                      date: tempPickup.date,
+                      status: tempPickup.status
+                  }).save();
+              }
+          }
         }
     });
 
@@ -141,6 +160,8 @@ io.on('connection', (socket) => {
                 activePickup = new Pickup({
                     donator: activePickup.donator,
                     volunteer: activePickup.volunteer,
+                    closestvolunteers: activePickup.closestvolunteers,
+                    deniedvolunteers: activePickup.deniedvolunteers,
                     geo: activePickup.geo,
                     date: activePickup.date,
                     status: activePickup.status,

@@ -48,11 +48,13 @@ module.exports = {
      */
     create: function (req, res) {
         var Pickup = new PickupModel({
-			donator : req.body.donator,
-			volunteer : req.body.volunteer,
-			status : req.body.status,
-			date : req.body.date,
-			geo : req.body.geo
+          donator : req.body.donator,
+          volunteer : req.body.volunteer,
+          closestvolunteers: req.body.closestvolunteers,
+          deniedvolunteers: req.body.deniedvolunteers,
+          status : req.body.status,
+          date : req.body.date,
+          geo : req.body.geo
         });
 
         Pickup.save(function (err, Pickup) {
@@ -86,6 +88,8 @@ module.exports = {
 
             Pickup.donator = req.body.donator ? req.body.donator : Pickup.donator;
             Pickup.volunteer = req.body.volunteer ? req.body.volunteer : Pickup.volunteer;
+            Pickup.closestvolunteers = req.body.closestvolunteers ? req.body.closestvolunteers : Pickup.closestvolunteers;
+            Pickup.deniedvolunteers = req.body.deniedvolunteers ? req.body.deniedvolunteers : Pickup.deniedvolunteers;
             Pickup.status = req.body.status ? req.body.status : Pickup.status;
             Pickup.date = req.body.date ? req.body.date : Pickup.date;
             Pickup.geo = req.body.geo ? req.body.geo : Pickup.geo;

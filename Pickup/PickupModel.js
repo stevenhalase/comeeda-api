@@ -5,7 +5,9 @@ var UserSchema = require('../User/UserModel').UserSchema;
 
 var PickupSchema = new Schema({
 	'donator' : UserSchema,
-	'volunteer' : UserSchema,
+  'volunteer' : UserSchema,
+  'closestvolunteers': [ UserSchema ],
+  'deniedvolunteers': [ UserSchema ],
 	'status' : [{ name: String, date: Date }],
 	'date' : Date,
 	'geo': Object
