@@ -5,27 +5,27 @@ var PickupController = require('./PickupController.js');
 /*
  * GET
  */
-router.get('/', PickupController.list);
+router.get('/api/pickups/', PickupController.list);
 
 /*
  * GET
  */
-router.get('/:id', PickupController.show);
+router.get('/api/pickups/:id', PickupController.show);
 
 /*
  * POST
  */
-router.post('/', PickupController.create);
+router.post('/api/pickups/', PickupController.create);
 
 /*
  * PUT
  */
-router.put('/:id', PickupController.update);
+router.put('/api/pickups/:id', PickupController.update);
 
 /*
  * DELETE
  */
-router.delete('/:id', PickupController.remove);
+router.delete('/api/pickups/:id', PickupController.remove);
 
 /*
  * GET
@@ -46,5 +46,10 @@ router.get('/api/pickups/user/distance/:id', PickupController.totalDistanceOfPic
  * GET
  */
 router.get('/api/pickups/user/time/:id', PickupController.totalTimeOfPickupsByUser);
+
+/*
+ * GET
+ */
+router.get('/api/pickups/user/stats/:id', PickupController.userStats);
 
 module.exports = router;

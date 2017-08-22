@@ -145,6 +145,7 @@ module.exports = {
      * PickupController.numberOfPickupsByUser()
      */
     numberOfPickupsByUser: function (req, res) {
+        var query = req.query;
         var userId = req.params.id;
         PickupModel.find({ 'volunteer._id': userId }, function (err, Pickups) {
             if (err) {
@@ -155,21 +156,14 @@ module.exports = {
                 });
             }
 
-            let counter = 0;
-            for (let pickup of Pickups) {
-              if (pickup.status) {
-                if (pickup.status) {
-                  for (let status of pickup.status) {
-                    if (status.name === 'Complete') {
-                      counter++;
-                    }
-                  }
-                }
-              }
+            if (query.frame) {
+              Pickups = frameFilter(query.frame, Pickups);
             }
 
-            console.log(counter);
-            return res.json({result: counter});
+            let count = pickupCount(Pickups);
+
+            console.log(count);
+            return res.json({result: count});
         });
     },
 
@@ -177,6 +171,7 @@ module.exports = {
      * PickupController.totalDistanceOfPickupsByUser()
      */
     totalDistanceOfPickupsByUser: function (req, res) {
+        var query = req.query;
         var userId = req.params.id;
         PickupModel.find({ 'volunteer._id': userId }, function (err, Pickups) {
             if (err) {
@@ -187,19 +182,11 @@ module.exports = {
                 });
             }
 
-            let totalDistance = 0;
-            for (let pickup of Pickups) {
-              if (pickup.geo) {
-                if (pickup.geo.waypoints) {
-
-                  if (pickup.geo.waypoints.length > 1) {
-                    for (let i = 1; i < pickup.geo.waypoints.length; i++) {
-                      totalDistance += calculateDistance(pickup.geo.waypoints[i].lat, pickup.geo.waypoints[i].lng, pickup.geo.waypoints[i - 1].lat, pickup.geo.waypoints[i - 1].lng, "M");
-                    }
-                  }
-                }
-              }
+            if (query.frame) {
+              Pickups = frameFilter(query.frame, Pickups);
             }
+
+            let totalDistance = totalDistance(Pickups);
 
             console.log(totalDistance)
             return res.json({result: totalDistance});
@@ -210,6 +197,7 @@ module.exports = {
      * PickupController.totalTimeOfPickupsByUser()
      */
     totalTimeOfPickupsByUser: function (req, res) {
+        var query = req.query;
         var userId = req.params.id;
         PickupModel.find({ 'volunteer._id': userId }, function (err, Pickups) {
             if (err) {
@@ -220,36 +208,46 @@ module.exports = {
                 });
             }
 
-            let totalTime = 0;
-            for (let pickup of Pickups) {
-              if (pickup.status) {
-                if (pickup.status) {
-                  let hasAcceptedStatus = false;
-                  let hasCanceledStatus = false;
-                  let hasCompleteStatus = false;
-                  let startDate = null;
-                  let endDate = null;
-                  for (let status of pickup.status) {
-                    if (status.name === 'Accepted') {
-                      hasAcceptedStatus = true;
-                      startDate = status.date;
-                    } else if (status.name === 'Canceled') {
-                      hasCanceledStatus = true;
-                      endDate = status.date;
-                    } else if (status.name === 'Complete') {
-                      hasCompleteStatus = true;
-                      endDate = status.date;
-                    }
-                  }
-                  if (startDate && endDate) {
-                    totalTime += Math.abs(endDate - startDate) / 36e5;
-                  }
-                }
-              }
+            if (query.frame) {
+              Pickups = frameFilter(query.frame, Pickups);
             }
+
+            let totalTime = totalTime(Pickups);
 
             console.log(totalTime)
             return res.json({result: totalTime});
+        });
+    },
+
+    /**
+     * PickupController.userStats()
+     */
+    userStats: function (req, res) {
+        var query = req.query;
+        var userId = req.params.id;
+        PickupModel.find({ 'volunteer._id': userId }, function (err, Pickups) {
+            if (err) {
+                console.log(err)
+                return res.status(500).json({
+                    message: 'Error when getting Pickup.',
+                    error: err
+                });
+            }
+
+            if (query.frame) {
+              Pickups = frameFilter(query.frame, Pickups);
+            }
+
+            let count = getPickupCount(Pickups);
+            let totalDistance = getTotalDistance(Pickups);
+            let totalTime = getTotalTime(Pickups);
+
+            console.log(totalTime)
+            return res.json({result: {
+              count: count,
+              totalDistance: totalDistance,
+              totalTime: totalTime
+            }});
         });
     }
 };
@@ -266,4 +264,92 @@ function calculateDistance(lat1, lon1, lat2, lon2, unit) {
 	if (unit=="K") { dist = dist * 1.609344 }
 	if (unit=="N") { dist = dist * 0.8684 }
 	return dist
+}
+
+function frameFilter(frame, pickupArr) {
+  let today = new Date();
+  if (frame === 'Week') {
+    let lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    pickupArr = pickupArr.filter((pickup) => {
+      // console.log(pickup.date > lastWeek)
+      return pickup.date > lastWeek;
+    })
+  } else if (frame === 'Month') {
+    let lastWeek = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+    pickupArr = pickupArr.filter((pickup) => {
+      // console.log(pickup.date > lastWeek)
+      return pickup.date > lastWeek;
+    })
+  } else if (frame === 'Year') {
+    let lastWeek = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000);
+    pickupArr = pickupArr.filter((pickup) => {
+      // console.log(pickup.date > lastWeek)
+      return pickup.date > lastWeek;
+    })
+  }
+  return pickupArr;
+}
+
+function getPickupCount(pickups) {
+  let counter = 0;
+  for (let pickup of pickups) {
+    if (pickup.status) {
+      if (pickup.status) {
+        for (let status of pickup.status) {
+          if (status.name === 'Complete') {
+            counter++;
+          }
+        }
+      }
+    }
+  }
+  return counter;
+}
+
+function getTotalDistance(pickups) {
+  let totalDistance = 0;
+  for (let pickup of pickups) {
+    if (pickup.geo) {
+      if (pickup.geo.waypoints) {
+
+        if (pickup.geo.waypoints.length > 1) {
+          for (let i = 1; i < pickup.geo.waypoints.length; i++) {
+            totalDistance += calculateDistance(pickup.geo.waypoints[i].lat, pickup.geo.waypoints[i].lng, pickup.geo.waypoints[i - 1].lat, pickup.geo.waypoints[i - 1].lng, "M");
+          }
+        }
+      }
+    }
+  }
+  return totalDistance;
+}
+
+function getTotalTime(pickups) {
+  let totalTime = 0;
+  for (let pickup of pickups) {
+    if (pickup.status) {
+      if (pickup.status) {
+        let hasAcceptedStatus = false;
+        let hasCanceledStatus = false;
+        let hasCompleteStatus = false;
+        let startDate = null;
+        let endDate = null;
+        for (let status of pickup.status) {
+          if (status.name === 'Accepted') {
+            hasAcceptedStatus = true;
+            startDate = status.date;
+          } else if (status.name === 'Canceled') {
+            hasCanceledStatus = true;
+            endDate = status.date;
+          } else if (status.name === 'Complete') {
+            hasCompleteStatus = true;
+            endDate = status.date;
+          }
+        }
+        if (startDate && endDate) {
+          totalTime += Math.abs(endDate - startDate) / 36e5;
+        }
+      }
+    }
+  }
+  return totalTime;
 }
