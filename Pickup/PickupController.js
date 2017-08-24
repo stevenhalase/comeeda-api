@@ -1,4 +1,5 @@
 var PickupModel = require('./PickupModel.js').PickupModel;
+const request = require('request');
 
 /**
  * PickupController.js
@@ -127,6 +128,7 @@ module.exports = {
      * PickupController.pickupsByUser()
      */
     pickupsByUser: function (req, res) {
+        var query = req.query;
         var userId = req.params.id;
         PickupModel.find({ 'volunteer._id': userId }, function (err, Pickups) {
             if (err) {
@@ -136,6 +138,11 @@ module.exports = {
                     error: err
                 });
             }
+            
+            if (query.frame) {
+              Pickups = frameFilter(query.frame, Pickups);
+            }
+
             console.log(Pickups)
             return res.json(Pickups);
         });
@@ -248,6 +255,43 @@ module.exports = {
               totalDistance: totalDistance,
               totalTime: totalTime
             }});
+        });
+    },
+
+    /**
+     * PickupController.staticMap()
+     */
+    staticMap: function (req, res) {
+        var id = req.params.id;
+        PickupModel.findOne({_id: id}, function (err, Pickup) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Pickup.',
+                    error: err
+                });
+            }
+            if (!Pickup) {
+                return res.status(404).json({
+                    message: 'No such Pickup'
+                });
+            }
+
+            let url = 'https://maps.googleapis.com/maps/api/directions/json?origin=' + Pickup.geo.request.origin.lat + ',' + Pickup.geo.request.origin.lng +
+              '&destination=' + Pickup.geo.request.destination.lat + ',' + Pickup.geo.request.destination.lng + '&key=AIzaSyBsIfi6lE23Bs6i4DFXP8nIY3HYYLvX6Vw';
+            request.get(url, function(err, response, body) {
+              if (err) {
+                console.log(error);
+              }
+              body = JSON.parse(body);
+              console.log('BODY: ', body)
+              console.log('ROUTES: ', body.routes[0].overview_polyline)
+              let path = body.routes[0].overview_polyline.points;
+              let mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?size=600x400&path=enc:' + path + 
+                '&markers=color:blue%7Clabel:S%7C' + Pickup.geo.request.origin.lat + ',' + Pickup.geo.request.origin.lng +
+                '&markers=color:blue%7Clabel:E%7C' + Pickup.geo.request.destination.lat + ',' + Pickup.geo.request.destination.lng +
+                '&key=AIzaSyBsIfi6lE23Bs6i4DFXP8nIY3HYYLvX6Vw';
+              return res.json(mapUrl)
+            })
         });
     }
 };

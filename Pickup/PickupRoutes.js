@@ -52,4 +52,9 @@ router.get('/api/pickups/user/time/:id', PickupController.totalTimeOfPickupsByUs
  */
 router.get('/api/pickups/user/stats/:id', PickupController.userStats);
 
+/*
+ * GET
+ */
+router.get('/api/pickups/staticmap/:id', PickupController.staticMap);
+
 module.exports = router;
