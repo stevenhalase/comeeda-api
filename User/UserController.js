@@ -134,6 +134,7 @@ module.exports = {
      * UserController.uploadProfilePicture()
      */
     uploadProfilePicture: function (req, res) {
+        console.log(req)
         console.log(req.body)
         var id = req.params.id;
         UserModel.findOne({_id: id}, function (err, User) {
