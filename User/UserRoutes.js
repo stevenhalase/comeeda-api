@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var UserController = require('./UserController.js');
 
+const mongoose = require('mongoose');
 var multiparty = require('connect-multiparty')();
 var fs = require('fs');
 var Gridfs = require('gridfs-stream');
