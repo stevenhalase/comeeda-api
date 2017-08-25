@@ -131,6 +131,41 @@ module.exports = {
     },
 
     /**
+     * UserController.uploadProfilePicture()
+     */
+    uploadProfilePicture: function (req, res) {
+        console.log(req.body)
+        var id = req.params.id;
+        UserModel.findOne({_id: id}, function (err, User) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting User',
+                    error: err
+                });
+            }
+            if (!User) {
+                return res.status(404).json({
+                    message: 'No such User'
+                });
+            }
+            return res.json();
+
+            // User.image = req.body.image ? req.body.image : User.image;
+			
+            // User.save(function (err, User) {
+            //     if (err) {
+            //         return res.status(500).json({
+            //             message: 'Error when updating User.',
+            //             error: err
+            //         });
+            //     }
+
+            //     return res.json(User);
+            // });
+        });
+    },
+
+    /**
      * UserController.update()
      */
     update: function (req, res) {
