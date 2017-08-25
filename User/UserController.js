@@ -113,6 +113,8 @@ module.exports = {
                     email : req.body.email,
                     organization : req.body.organization,
                     membertype : req.body.membertype,
+                    city: req.body.city,
+                    state: req.body.state,
                     password : req.body.password,
                     location : req.body.location,
                     socketid : req.body.socketid,
