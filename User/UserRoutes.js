@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 var multiparty = require('connect-multiparty')();
 var fs = require('fs');
 var Gridfs = require('gridfs-stream');
+const UserModel = require('./UserModel.js').UserModel;
 
 /*
  * GET
@@ -56,7 +57,7 @@ router.post('/api/users/profilepicture/:id', multiparty, function(req, res){
    writestream.on('close', function(file) {
       console.log('FILE: ', file);
       console.log('FILEID: ', file._id);
-      User.findById(req.params.id, function(err, user) {
+      UserModel.findById(req.params.id, function(err, user) {
         if (err) { console.log('ERR: ', err) }
         user.image = file;
         user.save(function(err, updatedUser) {
