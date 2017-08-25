@@ -74,10 +74,14 @@ router.post('/api/users/profilepicture/:id', multiparty, function(req, res){
 });
 
 router.get('/api/users/profilepicture/:id', function(req, res) {
+   var db = mongoose.connection.db;
+   var mongoDriver = mongoose.mongo;
+   var gfs = new Gridfs(db, mongoDriver);
    var readstream = gfs.createReadStream({
       _id: req.params.id
    });
    readstream.pipe(res);
+  //  return res;
 });
 
 module.exports = router;
