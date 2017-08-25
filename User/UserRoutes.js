@@ -22,10 +22,10 @@ router.post('/api/users/login', UserController.login);
  */
 router.post('/api/users/', UserController.create);
 
-/*
- * POST
- */
-router.post('/api/users/profilepicture/:id', UserController.uploadProfilePicture);
+// /*
+//  * POST
+//  */
+// router.post('/api/users/profilepicture/:id', UserController.uploadProfilePicture);
 
 /*
  * PUT

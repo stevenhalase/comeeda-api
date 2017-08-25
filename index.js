@@ -9,6 +9,11 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const port = process.env.PORT || 4000;
 
+var router = express.Router();
+var multiparty = require('connect-multiparty')();
+var fs = require('fs');
+var Gridfs = require('gridfs-stream');
+
 const UserRoutes = require('./User/UserRoutes');
 const PickupRoutes = require('./Pickup/PickupRoutes');
 
@@ -247,6 +252,36 @@ mongoose.connect(uristring, (error) => {
 
 app.use('/', UserRoutes);
 app.use('/', PickupRoutes);
+
+router.post('/api/users/profilepicture/:id', multiparty, function(req, res){
+   var db = mongoose.connection.db;
+   var mongoDriver = mongoose.mongo;
+   var gfs = new Gridfs(db, mongoDriver);
+   var writestream = gfs.createWriteStream({
+     filename: req.files.file.name,
+     mode: 'w',
+     content_type: req.files.file.mimetype,
+     metadata: req.body
+   });
+   fs.createReadStream(req.files.file.path).pipe(writestream);
+   writestream.on('close', function(file) {
+      console.log('FILE: ', file);
+      console.log('FILEID: ', file._id);
+      User.findById(req.params.id, function(err, user) {
+        if (err) { console.log('ERR: ', err) }
+        user.image = file;
+        user.save(function(err, updatedUser) {
+          if (err) { console.log('ERR: ', err) }
+          console.log('UPDATE: ', updatedUser)
+          return res.json(200, updatedUser)
+        })
+      });
+      fs.unlink(req.files.file.path, function(err) {
+        if (err) { console.log('ERR: ', err) }
+        console.log('success!')
+      });
+   });
+});
 
 server.listen(port, () => {
     console.log('Server started at localhost:' + port);

@@ -12,13 +12,16 @@
   "dependencies": {
     "bcrypt": "^1.0.1",
     "body-parser": "^1.15.2",
+    "connect-multiparty": "^2.0.0",
     "express": "^4.14.0",
+    "gridfs-stream": "^1.1.1",
     "mongoose": "^4.7.4",
     "morgan": "^1.7.0",
     "request": "^2.79.0",
     "socket.io": "^1.7.2"
   },
-  "bugs": { "url" : "https://github.com/owner/project/issues",
-    "email" : "project@hostname.com"
+  "bugs": {
+    "url": "https://github.com/owner/project/issues",
+    "email": "project@hostname.com"
   }
 }
