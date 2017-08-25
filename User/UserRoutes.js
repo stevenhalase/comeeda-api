@@ -59,7 +59,7 @@ router.post('/api/users/profilepicture/:id', multiparty, function(req, res){
       console.log('FILEID: ', file._id);
       UserModel.findById(req.params.id, function(err, user) {
         if (err) { console.log('ERR: ', err) }
-        user.image = file;
+        user.image = file._id;
         user.save(function(err, updatedUser) {
           if (err) { console.log('ERR: ', err) }
           console.log('UPDATE: ', updatedUser)
@@ -71,6 +71,13 @@ router.post('/api/users/profilepicture/:id', multiparty, function(req, res){
         console.log('success!')
       });
    });
+});
+
+router.get('/api/users/profilepicture/:id', function(req, res) {
+   var readstream = gfs.createReadStream({
+      _id: req.params.id
+   });
+   readstream.pipe(res);
 });
 
 module.exports = router;
