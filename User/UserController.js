@@ -30,7 +30,7 @@ module.exports = {
     show: function (req, res) {
         var id = req.params.id;
         UserModel.findOne({_id: id})
-        .populate('image')
+        // .populate('image')
         .exec(function (err, User) {
             if (err) {
                 return res.status(500).json({
@@ -54,7 +54,7 @@ module.exports = {
         console.log('LOGIN: ', req.body);
         var email = req.body.email;
         UserModel.findOne({email: email})
-        .populate('image')
+        // .populate('image')
         .exec(function (err, User) {
           if (err) {
               console.log('LOGIN ERROR: ', err)
