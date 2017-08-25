@@ -250,9 +250,6 @@ mongoose.connect(uristring, (error) => {
   }
 })
 
-app.use('/', UserRoutes);
-app.use('/', PickupRoutes);
-
 router.post('/api/users/profilepicture/:id', multiparty, function(req, res){
    var db = mongoose.connection.db;
    var mongoDriver = mongoose.mongo;
@@ -282,6 +279,9 @@ router.post('/api/users/profilepicture/:id', multiparty, function(req, res){
       });
    });
 });
+
+app.use('/', UserRoutes);
+app.use('/', PickupRoutes);
 
 server.listen(port, () => {
     console.log('Server started at localhost:' + port);
