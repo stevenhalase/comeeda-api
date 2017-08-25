@@ -11,7 +11,7 @@ var UserSchema = new Schema({
 	'state': String,
 	'membertype' : Array,
 	'password' : String,
-	'image': String,
+	'image': { type: Schema.Types.ObjectId, ref: 'fs.files' },
 	'location': Object,
 	'socketid': String,
   'modifiedon': Date

@@ -30,7 +30,7 @@ module.exports = {
     show: function (req, res) {
         var id = req.params.id;
         UserModel.findOne({_id: id})
-        // .populate('image')
+        .populate('image')
         .exec(function (err, User) {
             if (err) {
                 return res.status(500).json({
