@@ -53,33 +53,35 @@ module.exports = {
     login: function (req, res) {
         console.log('LOGIN: ', req.body);
         var email = req.body.email;
-        UserModel.findOne({email: email}, function (err, User) {
-            if (err) {
-                console.log('LOGIN ERROR: ', err)
-                return res.json({
-                    message: 'Failure getting User',
-                    error: 'Failure getting User'
-                });
-            }
-            if (!User) {
-                console.log('LOGIN NO USER')
-                return res.json({
-                    message: 'Failure getting User',
-                    error: 'Failure getting User'
-                });
-            }
+        UserModel.findOne({email: email})
+        .populate('image')
+        .exec(function (err, User) {
+          if (err) {
+              console.log('LOGIN ERROR: ', err)
+              return res.json({
+                  message: 'Failure getting User',
+                  error: 'Failure getting User'
+              });
+          }
+          if (!User) {
+              console.log('LOGIN NO USER')
+              return res.json({
+                  message: 'Failure getting User',
+                  error: 'Failure getting User'
+              });
+          }
 
-            if (User) {
-                if(bcrypt.compareSync(req.body.password, User.password)) {
-                    return res.json(User);
-                } else {
-                    console.log('LOGIN BCRYPT FAIL')
-                    return res.json({
-                        message: 'Failure getting User',
-                        error: 'Failure getting User'
-                    });
-                }
-            }
+          if (User) {
+              if(bcrypt.compareSync(req.body.password, User.password)) {
+                  return res.json(User);
+              } else {
+                  console.log('LOGIN BCRYPT FAIL')
+                  return res.json({
+                      message: 'Failure getting User',
+                      error: 'Failure getting User'
+                  });
+              }
+          }
             
         });
     },
