@@ -1,4 +1,5 @@
 const UserModel = require('./UserModel.js').UserModel;
+var PickupModel = require('../Pickup/PickupModel.js').PickupModel;
 const bcrypt = require('bcrypt');
 const salt = bcrypt.genSaltSync(10);
 
@@ -21,6 +22,45 @@ module.exports = {
                 });
             }
             return res.json(Users);
+        });
+    },
+
+    /**
+     * UserController.rankingsPickups()
+     */
+    rankingsPickups: function (req, res) {
+        UserModel.find()
+        .exec(function (err, Users) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Users.',
+                    error: err
+                });
+            }
+
+            let retArr = [];
+            let queryArr = [];
+            for (let user of Users) {
+              retArr.push({
+                user: user,
+                count: 0
+              })
+              queryArr.push(PickupModel.where('volunteer._id', user._id).find());
+            }
+
+            Promise.all(queryArr).then(function(userPickupsArr) {
+              for (let i = 0; i < userPickupsArr.length; i++) {
+                retArr[i].count = userPickupsArr[i].length;
+                // console.log('ret: ', retArr[i].count)
+              }
+              retArr.sort(function(a,b) {
+                return b.count - a.count;
+              })
+
+              // console.log(retArr[0])
+
+              return res.json(retArr);
+            })
         });
     },
 
@@ -136,46 +176,11 @@ module.exports = {
         });
     },
 
-    // /**
-    //  * UserController.uploadProfilePicture()
-    //  */
-    // uploadProfilePicture: function (req, res) {
-    //     console.log(req)
-    //     console.log(req.body)
-    //     var id = req.params.id;
-    //     UserModel.findOne({_id: id}, function (err, User) {
-    //         if (err) {
-    //             return res.status(500).json({
-    //                 message: 'Error when getting User',
-    //                 error: err
-    //             });
-    //         }
-    //         if (!User) {
-    //             return res.status(404).json({
-    //                 message: 'No such User'
-    //             });
-    //         }
-    //         return res.json();
-
-    //         // User.image = req.body.image ? req.body.image : User.image;
-			
-    //         // User.save(function (err, User) {
-    //         //     if (err) {
-    //         //         return res.status(500).json({
-    //         //             message: 'Error when updating User.',
-    //         //             error: err
-    //         //         });
-    //         //     }
-
-    //         //     return res.json(User);
-    //         // });
-    //     });
-    // },
-
     /**
      * UserController.update()
      */
     update: function (req, res) {
+        console.log(req.body)
         var id = req.params.id;
         UserModel.findOne({_id: id}, function (err, User) {
             if (err) {
@@ -189,7 +194,7 @@ module.exports = {
                     message: 'No such User'
                 });
             }
-
+            console.log('USER: ', User)
             User.firstname = req.body.firstname ? req.body.firstname : User.firstname;
             User.lastname = req.body.lastname ? req.body.lastname : User.lastname;
             User.email = req.body.email ? req.body.email : User.email;
