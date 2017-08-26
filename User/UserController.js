@@ -65,6 +65,102 @@ module.exports = {
     },
 
     /**
+     * UserController.rankingsDistanceOnPickups()
+     */
+    rankingsDistanceOnPickups: function (req, res) {
+        UserModel.find()
+        .exec(function (err, Users) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Users.',
+                    error: err
+                });
+            }
+
+            let retArr = [];
+            let queryArr = [];
+            for (let user of Users) {
+              retArr.push({
+                user: user,
+                pickups: 0,
+                distance: 0
+              })
+              queryArr.push(PickupModel.where('volunteer._id', user._id).find());
+            }
+
+            Promise.all(queryArr).then(function(userPickupsArr) {
+              for (let i = 0; i < userPickupsArr.length; i++) {
+                retArr[i].pickups = userPickupsArr[i];
+              }
+
+              for (let user of retArr) {
+                if (user.pickups.length > 0) {
+                  for (let pickup of user.pickups) {
+                    let pickupDistance = getTotalPickupDistance(pickup);
+                    user.distance += pickupDistance;
+                  }
+                }
+                delete user.pickups;
+              }
+
+              retArr.sort(function(a,b) {
+                return b.distance - a.distance;
+              })
+
+              return res.json(retArr);
+            })
+        });
+    },
+
+    /**
+     * UserController.rankingsTimeOnPickups()
+     */
+    rankingsTimeOnPickups: function (req, res) {
+        UserModel.find()
+        .exec(function (err, Users) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Users.',
+                    error: err
+                });
+            }
+
+            let retArr = [];
+            let queryArr = [];
+            for (let user of Users) {
+              retArr.push({
+                user: user,
+                pickups: 0,
+                time: 0
+              })
+              queryArr.push(PickupModel.where('volunteer._id', user._id).find());
+            }
+
+            Promise.all(queryArr).then(function(userPickupsArr) {
+              for (let i = 0; i < userPickupsArr.length; i++) {
+                retArr[i].pickups = userPickupsArr[i];
+              }
+
+              for (let user of retArr) {
+                if (user.pickups.length > 0) {
+                  for (let pickup of user.pickups) {
+                    let pickupDistance = getTotalPickupTime(pickup);
+                    user.time += pickupDistance;
+                  }
+                }
+                delete user.pickups;
+              }
+
+              retArr.sort(function(a,b) {
+                return b.time - a.time;
+              })
+
+              return res.json(retArr);
+            })
+        });
+    },
+
+    /**
      * UserController.show()
      */
     show: function (req, res) {
@@ -238,3 +334,59 @@ module.exports = {
         });
     }
 };
+
+function calculateDistance(lat1, lon1, lat2, lon2, unit) {
+	var radlat1 = Math.PI * lat1/180
+	var radlat2 = Math.PI * lat2/180
+	var theta = lon1-lon2
+	var radtheta = Math.PI * theta/180
+	var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+	dist = Math.acos(dist)
+	dist = dist * 180/Math.PI
+	dist = dist * 60 * 1.1515
+	if (unit=="K") { dist = dist * 1.609344 }
+	if (unit=="N") { dist = dist * 0.8684 }
+	return dist
+}
+
+function getTotalPickupDistance(pickup) {
+  let totalDistance = 0;
+  if (pickup.geo) {
+    if (pickup.geo.waypoints) {
+
+      if (pickup.geo.waypoints.length > 1) {
+        for (let i = 1; i < pickup.geo.waypoints.length; i++) {
+          totalDistance += calculateDistance(pickup.geo.waypoints[i].lat, pickup.geo.waypoints[i].lng, pickup.geo.waypoints[i - 1].lat, pickup.geo.waypoints[i - 1].lng, "M");
+        }
+      }
+    }
+  }
+  return totalDistance;
+}
+
+function getTotalPickupTime(pickup) {
+  let totalTime = 0;
+  if (pickup.status) {
+    let hasAcceptedStatus = false;
+    let hasCanceledStatus = false;
+    let hasCompleteStatus = false;
+    let startDate = null;
+    let endDate = null;
+    for (let status of pickup.status) {
+      if (status.name === 'Accepted') {
+        hasAcceptedStatus = true;
+        startDate = status.date;
+      } else if (status.name === 'Canceled') {
+        hasCanceledStatus = true;
+        endDate = status.date;
+      } else if (status.name === 'Complete') {
+        hasCompleteStatus = true;
+        endDate = status.date;
+      }
+    }
+    if (startDate && endDate) {
+      totalTime += Math.abs(endDate - startDate) / 36e5;
+    }
+  }
+  return totalTime;
+}

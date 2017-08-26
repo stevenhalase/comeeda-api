@@ -21,6 +21,16 @@ router.get('/api/users/rankings/pickups', UserController.rankingsPickups);
 /*
  * GET
  */
+router.get('/api/users/rankings/distance', UserController.rankingsDistanceOnPickups);
+
+/*
+ * GET
+ */
+router.get('/api/users/rankings/time', UserController.rankingsTimeOnPickups);
+
+/*
+ * GET
+ */
 router.get('/api/users/:id', UserController.show);
 
 /*
