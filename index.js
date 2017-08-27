@@ -87,6 +87,8 @@ io.on('connection', (socket) => {
         console.log('Accepting pickup: ', tempPickup)
         tempPickup.status.push({ name: 'Accepted', date: Date.now() })
         tempPickup.volunteer = tempPickup.closestvolunteers[0];
+        io.to(tempPickup.donator.socketid).emit('chatConnected', tempPickup.volunteer);
+        io.to(tempPickup.volunteer.socketid).emit('chatConnected', tempPickup.donator);
         io.to(tempPickup.donator.socketid).emit('volunteerAssigned', tempPickup.volunteer);
         io.to(tempPickup.closestvolunteers[0].socketid).emit('startPickup', tempPickup);
         for (var i = 0; i < tempPickups.length; i++) {
@@ -195,6 +197,20 @@ io.on('connection', (socket) => {
             }
         }
         io.to(activePickup.donator.socketid).emit('updateVolunteerLocationForDonator', volLatLng);
+    })
+
+    socket.on('sendChatMessage', (message, sendingUser, receivingUser) => {
+      console.log('SENDING USER: ', socket.id);
+      console.log('REC USER: ', receivingUser.socketid);
+      sendingUser.socketid = socket.id;
+      io.to(socket.id).emit('chatMessageSentConfirmation', message);
+      io.to(receivingUser.socketid).emit('newChatMessage', message, sendingUser);
+    })
+
+    socket.on('chatMessageRecievedConfirmation', (message, sendingUser) => {
+      console.log('SENDING USER Socket: ', sendingUser.socketid);
+      console.log('SENDING USER: ', sendingUser);
+      io.to(sendingUser.socketid).emit('chatMessageReceivedConfirmation', message);
     })
 
     socket.on('disconnect', () => {
