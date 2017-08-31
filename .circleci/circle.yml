@@ -1,0 +1,10 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:4.8.2
+deployment:
+  staging:
+    branch: master
+    heroku:
+      appname: comeeda-api
