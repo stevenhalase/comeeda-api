@@ -19,26 +19,24 @@ jobs:
           paths:
             - node_modules
     deploy:
-    machine:
-        enabled: true
-    environment:
-      - HEROKU_APP: comeeda-api
-    steps:
-      - run:
-          name: save SHA to a file
-          command: echo $CIRCLE_SHA1 > .circle-sha
-      - restore_cache:
-          keys:
-            - v1-repo-{{ checksum ".circle-sha" }}
-      - restore_cache:
-          keys:
-            - v1-bundle-{{ checksum "Gemfile.lock" }}
-      - restore_cache:
-          keys:
-            - v1-assets-{{ checksum ".circle-sha" }}
-      - run:
-          name: Setup Heroku
-          command: bash .circleci/setup-heroku.sh
-      - run:
-          command: |
-            git push heroku master
+      environment:
+        - HEROKU_APP: comeeda-api
+      steps:
+        - run:
+            name: save SHA to a file
+            command: echo $CIRCLE_SHA1 > .circle-sha
+        - restore_cache:
+            keys:
+              - v1-repo-{{ checksum ".circle-sha" }}
+        - restore_cache:
+            keys:
+              - v1-bundle-{{ checksum "Gemfile.lock" }}
+        - restore_cache:
+            keys:
+              - v1-assets-{{ checksum ".circle-sha" }}
+        - run:
+            name: Setup Heroku
+            command: bash .circleci/setup-heroku.sh
+        - run:
+            command: |
+              git push heroku master
