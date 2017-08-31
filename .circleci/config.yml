@@ -1,4 +1,11 @@
 version: 2
+jobs:
+  build:
+    working_directory: ~/.
+    docker:
+      image: circleci/node:latest
+    steps:
+      - checkout
 deployment:
   staging:
     branch: master
